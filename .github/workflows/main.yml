@@ -2,33 +2,45 @@ name: Build Android APK
 
 on:
   push:
-      branches: [ "main", "master" ]
-        workflow_dispatch:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
 
-        jobs:
-          build:
-              runs-on: ubuntu-latest
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-                  steps:
-                      - uses: actions/checkout@v4
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-                          - name: Set up Python
-                                uses: actions/setup-python@v5
-                                      with:
-                                              python-version: '3.10'
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
 
-                                                  - name: Install dependencies
-                                                        run: |
-                                                                pip install --upgrade pip
-                                                                        pip install buildozer cython==0.29.33 kivy
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
 
-                                                                            - name: Build with Buildozer
-                                                                                  run: |
-                                                                                          yes | buildozer -v android debug
+    - name: Install System Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential git ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev libgstreamer1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good libsqlite3-dev sqlite3 bzip2 libbz2-dev libssl-dev openssl libffi-dev liballoc-mmap-dev libffi-dev libgl1-mesa-dev libgles2-mesa-dev ccache libncurses5:i386 libstdc++6:i386 libgtk2.0-0:i386 libpangox-1.0-0:i386 libpangoxft-1.0-0:i386 libidn11:i386 zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev
 
-                                                                                              - name: Upload APK
-                                                                                                    uses: actions/upload-artifact@v4
-                                                                                                          with:
-                                                                                                                  name: package
-                                                                                                                          path: bin/*.apk
-                                                                                                                          
+    - name: Install Python Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install --upgrade buildozer cython==0.29.33 kivy
+
+    - name: Build APK with Buildozer
+      run: |
+        yes | buildozer -v android debug
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: package
+        path: bin/*.apk
+        
