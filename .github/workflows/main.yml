@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout repository
@@ -26,8 +26,12 @@ jobs:
 
     - name: Install System Dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential git ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev libgstreamer1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good libsqlite3-dev sqlite3 bzip2 libbz2-dev libssl-dev openssl libffi-dev liballoc-mmap-dev libffi-dev libgl1-mesa-dev libgles2-mesa-dev ccache libncurses5:i386 libstdc++6:i386 libgtk2.0-0:i386 libpangox-1.0-0:i386 libpangoxft-1.0-0:i386 libidn11:i386 zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev
+        sudo apt-get update -y
+        sudo apt-get install -y --no-install-recommends \
+          build-essential git ffmpeg libsdl2-dev libsdl2-image-dev \
+          libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev \
+          libavformat-dev libavcodec-dev zlib1g-dev openjdk-17-jdk \
+          autoconf libtool pkg-config zip unzip ccache
 
     - name: Install Python Dependencies
       run: |
